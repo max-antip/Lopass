@@ -6,6 +6,8 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -19,8 +21,10 @@ public class IconLabel extends JPanel {
     public static final Border BORDER_lINE_RED = BorderFactory.
             createLineBorder(new Color(230, 159, 139));
     public static final Border EMPTY_BORDER = BorderFactory.createLineBorder(new Color(0, 0, 0, 0F));
+    public static final int TEXT_FlD_SIZE = 10;
 
     private JLabel textLbl, iconLbl;
+    private JTextField editTextField;
 
     public IconLabel(String text, Icon icon) {
         super(new MigLayout("", "[]5[]", "[]"));
@@ -31,6 +35,28 @@ public class IconLabel extends JPanel {
         textLbl = new JLabel(text);
         iconLbl = new JLabel(icon);
 
+        editTextField = new JTextField(TEXT_FlD_SIZE);
+        editTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String text = editTextField.getText();
+                    textLbl.setText(text);
+
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            remove(editTextField);
+                            add(textLbl, 1);
+
+                            repaint();
+                            revalidate();
+                        }
+                    });
+
+                }
+            }
+        });
 
         add(iconLbl);
         add(textLbl);
@@ -56,6 +82,18 @@ public class IconLabel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 setBackground(PRESSED_BG_COLOR);
+
+                if (e.getClickCount() == 2) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            remove(textLbl);
+                            add(editTextField, 1);
+                            repaint();
+                            revalidate();
+                        }
+                    });
+                }
             }
 
             @Override

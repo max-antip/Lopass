@@ -14,7 +14,7 @@ public class InsertFrameController {
         Record record = new Record();
         record.setTitle(title);
         record.addLoginPass(item);
-        if(StorageService.getInstance().addRecord(record)){
+        if (StorageService.getInstance().addRecord(record)) {
             eventBus.fireEvent(EventMessage.ADD_NEW_RECORD, record);
         }
     }
