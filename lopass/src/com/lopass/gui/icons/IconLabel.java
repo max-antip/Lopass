@@ -51,6 +51,7 @@ public class IconLabel extends JPanel {
 
                             repaint();
                             revalidate();
+
                         }
                     });
 
