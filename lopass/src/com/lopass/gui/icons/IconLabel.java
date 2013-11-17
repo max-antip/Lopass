@@ -14,9 +14,9 @@ import java.awt.event.MouseEvent;
 public class IconLabel extends JPanel {
 
     public static final Border LINE_BORDER = BorderFactory.
-            createLineBorder(new Color(155, 230, 145));
+            createLineBorder(new Color(196, 196, 196));
 
-    public static final Color PRESSED_BG_COLOR = new Color(171, 230, 165);
+    public static final Color PRESSED_BG_COLOR = new Color(110, 110, 110);
 
     public static final Border BORDER_lINE_RED = BorderFactory.
             createLineBorder(new Color(230, 159, 139));
@@ -29,6 +29,7 @@ public class IconLabel extends JPanel {
     public IconLabel(String text, Icon icon) {
         super(new MigLayout("", "[]5[]", "[]"));
         setBorder(EMPTY_BORDER);
+        setOpaque(false);
         initMouseListeners();
         if (text == null || icon == null) throw new NullPointerException("Icon or text is null");
 

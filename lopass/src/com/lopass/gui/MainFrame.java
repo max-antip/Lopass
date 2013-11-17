@@ -11,13 +11,11 @@ import com.lopass.main.Record;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.plaf.ActionMapUIResource;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +28,7 @@ public class MainFrame extends JFrame implements EventController {
     private static final String LOPASS_TITLE = "LoPass";
 
     private static final Color MAIN_BG = new Color(201, 240, 184);
+    private static final Color CONTENT_PANEL_BG = new Color(177, 240, 161);
     private static final Color LIGHT_BG = new Color(223, 254, 209);
     private static final int MAIN_WIDTH = 420;
     private static final int MAIN_HEIGHT = 480;
@@ -56,9 +55,25 @@ public class MainFrame extends JFrame implements EventController {
         initFrame();
 
         contentPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+        contentPanel.setBackground(CONTENT_PANEL_BG);
         //todo лэйаут для панели с паролями
 
-        addBut = new JButton(Icons.getVerySmallIcon(Icons.ADD));
+        addBut = new JButton(Icons.getMiddleIcon(Icons.ADD));
+        addBut.setToolTipText("Add new record (Alt+A)");
+
+        InputMap keyMap = new ComponentInputMap(addBut);
+        keyMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_MASK), "action");
+
+        ActionMap actionMap = new ActionMapUIResource();
+        actionMap.put("action", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openInsertPassFrame();
+            }
+        });
+
+        SwingUtilities.replaceUIActionMap(addBut, actionMap);
+        SwingUtilities.replaceUIInputMap(addBut, JComponent.WHEN_IN_FOCUSED_WINDOW, keyMap);
         addBut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,9 +82,9 @@ public class MainFrame extends JFrame implements EventController {
         });
 
         scrollPane = new JScrollPane(contentPanel);
-
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollPane, "span 2,wrap");
-        add(addBut, "w 20!,h 22!, align right,span 2");
+        add(addBut, "w 40!,h 40!, align left,span 2");
 
     }
 
@@ -97,6 +112,8 @@ public class MainFrame extends JFrame implements EventController {
         if (!hasRecord(record)) {
             subContentPanel = new JPanel(
                     new MigLayout("", "[]5[]1[]20[]1[]", "5[]5"));
+
+            subContentPanel.setBackground(CONTENT_PANEL_BG);
 
             recordMap.put(record.getTitle(), subContentPanel);
             contentPanel.add(subContentPanel, "wrap");
