@@ -27,20 +27,22 @@ public class MainFrame extends JFrame implements EventController {
 
     private static final String LOPASS_TITLE = "LoPass";
 
-    private static final Color MAIN_BG = new Color(201, 240, 184);
-    private static final Color CONTENT_PANEL_BG = new Color(177, 240, 161);
+    private static final Color MAIN_BG = Color.WHITE;
+    private static final Color SUB_PANEL_BG = new Color(220, 240, 221);
+    private static final Color CONTENT_PANEL_BG = new Color(238, 240, 240);
     private static final Color LIGHT_BG = new Color(223, 254, 209);
-    private static final int MAIN_WIDTH = 420;
-    private static final int MAIN_HEIGHT = 480;
+    private static final int MAIN_WIDTH = 480;
+    private static final int MAIN_HEIGHT = 510;
 
     private static final Font FONT_TITLE = new Font("Arial", Font.PLAIN, 16);
     private static final Font FONT_SUB_TITLE = new Font("Arial", Font.BOLD, 11);
     private static final Color INSERT_PANEL_COlOR = new Color(237, 151, 126);
+    public static final boolean RESIZABLE = true;
 
     JScrollPane scrollPane;
     JPanel contentPanel;
     JButton addBut;
-
+    JLabel statusLbl;
     private static EventBus eventBus = EventBus.getInstance();
     private Map<String, JPanel> recordMap;
 
@@ -83,8 +85,12 @@ public class MainFrame extends JFrame implements EventController {
 
         scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        statusLbl = new JLabel("");
+        statusLbl.setFont(FONT_SUB_TITLE);
         add(scrollPane, "span 2,wrap");
-        add(addBut, "w 40!,h 40!, align left,span 2");
+        add(addBut, "w 40!,h 40!, align left,span 2,split 2");
+        add(statusLbl, "align right,gapleft 50");
 
     }
 
@@ -92,8 +98,8 @@ public class MainFrame extends JFrame implements EventController {
         getContentPane().setBackground(MAIN_BG);
         setPreferredSize(new Dimension(MAIN_WIDTH, MAIN_HEIGHT));
         setLayout(new MigLayout("", "20[grow,fill][]20", "20[grow,fill][][]20"));
-        setResizable(false);
-        setLocation(200, 200);
+        setResizable(RESIZABLE);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
@@ -111,9 +117,10 @@ public class MainFrame extends JFrame implements EventController {
 
         if (!hasRecord(record)) {
             subContentPanel = new JPanel(
-                    new MigLayout("", "[]5[]1[]20[]1[]", "5[]5"));
+                    new MigLayout("insets 30", "[]5[]1[][grow,fill]1[]", "5[]5"));
 
-            subContentPanel.setBackground(CONTENT_PANEL_BG);
+            subContentPanel.setBackground(SUB_PANEL_BG);
+
 
             recordMap.put(record.getTitle(), subContentPanel);
             contentPanel.add(subContentPanel, "wrap");
@@ -331,6 +338,7 @@ public class MainFrame extends JFrame implements EventController {
 
             StringSelection strSel =
                     new StringSelection(text);
+            statusLbl.setText("Copied to clipboard: " + text);
 
             clpbrd.setContents(strSel, null);
         }
