@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.lopass.main.Record.LoginPass;
-
 public class MainFrame extends JFrame implements EventController {
 
     private static final String LOPASS_TITLE = "LoPass";
@@ -36,11 +34,12 @@ public class MainFrame extends JFrame implements EventController {
     private static final Font FONT_TITLE = new Font("Arial", Font.PLAIN, 16);
     private static final Font FONT_SUB_TITLE = new Font("Arial", Font.BOLD, 11);
     private static final Color INSERT_PANEL_COlOR = new Color(237, 151, 126);
+    public static final boolean RESIZABLE = true;
 
     JScrollPane scrollPane;
     JPanel contentPanel;
     JButton addBut;
-
+    JLabel statusLab;
     private static EventBus eventBus = EventBus.getInstance();
     private Map<String, JPanel> recordMap;
 
@@ -83,8 +82,11 @@ public class MainFrame extends JFrame implements EventController {
 
         scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        statusLab = new JLabel();
         add(scrollPane, "span 2,wrap");
-        add(addBut, "w 40!,h 40!, align left,span 2");
+        add(addBut, "w 40!,h 40!, align left,span 3,split 2");
+        add(statusLab, "gapleft 80,align right");
 
     }
 
@@ -92,7 +94,8 @@ public class MainFrame extends JFrame implements EventController {
         getContentPane().setBackground(MAIN_BG);
         setPreferredSize(new Dimension(MAIN_WIDTH, MAIN_HEIGHT));
         setLayout(new MigLayout("", "20[grow,fill][]20", "20[grow,fill][][]20"));
-        setResizable(false);
+        setResizable(RESIZABLE);
+        setMinimumSize(new Dimension(MAIN_WIDTH, MAIN_HEIGHT));
         setLocation(200, 200);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -118,41 +121,17 @@ public class MainFrame extends JFrame implements EventController {
             recordMap.put(record.getTitle(), subContentPanel);
             contentPanel.add(subContentPanel, "wrap");
 
-            final JPanel titlePanel = createTitlePanel(subContentPanel, record.getTitle());
-            JLabel titleLbl = new JLabel(record.getTitle());
-
-            titleLbl.setFont(FONT_TITLE);
-            titlePanel.add(titleLbl);
-
-            subContentPanel.add(titlePanel, " span 5,h 40!,wrap");
-
         } else {
             subContentPanel = getRecordPanel(record.getTitle());
         }
-        for (LoginPass lp : record.getLoginPassList()) {
-            addToPanel(subContentPanel, lp);
-        }
+        addToPanel(subContentPanel, record);
 
         repaint();
         revalidate();
     }
 
-    private void addToPanel(LoginPass logPass) {
-        if (logPass == null) return;
-
-        JPanel subContentPanel = getRecordPanel(logPass.getParentTitle());
-
-        if (subContentPanel == null) return;
-
-        addToPanel(subContentPanel, logPass);
-
-        repaint();
-        revalidate();
-
-    }
-
-    private void addToPanel(JPanel subContentPanel, LoginPass lp) {
-        JLabel subTitleLbl = new JLabel(lp.getSubTitle());
+    private void addToPanel(JPanel subContentPanel, Record lp) {
+        JLabel subTitleLbl = new JLabel(lp.getTitle());
         subTitleLbl.setFont(FONT_SUB_TITLE);
 
         final IconLabel loginLbl = new IconLabel(lp.getLogin(),
@@ -162,15 +141,6 @@ public class MainFrame extends JFrame implements EventController {
         IconLabel passLbl = new IconLabel(lp.getPass(),
                 Icons.getVerySmallIcon(Icons.PASS));
         passLbl.addMouseListener(new CopyToBufferAdapter(passLbl.getText()));
-
-//        JLabel loginLbl = new JLabel(lp.getLogin());
-//        JLabel passLbl = new JLabel(lp.getPass());
-
-//        JLabel loginIcon = new JLabel();
-//        loginIcon.setIcon(Icons.getVerySmallIcon(Icons.LOGIN));
-//
-//        JLabel passIcon = new JLabel();
-//        passIcon.setIcon(Icons.getVerySmallIcon(Icons.PASS));
 
         subContentPanel.add(subTitleLbl, "w 97!,gapleft 10");
 
@@ -197,33 +167,6 @@ public class MainFrame extends JFrame implements EventController {
             }
         }
         return false;
-    }
-
-    private JPanel createTitlePanel(final JPanel subContentPanel,
-                                    final String parentTile) {
-        final JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        titlePanel.setBackground(LIGHT_BG);
-        titlePanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                titlePanel.setBackground(MAIN_BG);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                titlePanel.setBackground(LIGHT_BG);
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && !newRecordIsAdding) {
-                    createTextFields(parentTile, subContentPanel);
-                    repaint();
-                    revalidate();
-                }
-            }
-        });
-        return titlePanel;
     }
 
     private boolean newRecordIsAdding;
@@ -299,8 +242,8 @@ public class MainFrame extends JFrame implements EventController {
                 break;
 
             case EventMessage.ADD_PASS_LOGIN:
-                if (obj instanceof LoginPass) {
-                    LoginPass rec = (LoginPass) obj;
+                if (obj instanceof Record) {
+                    Record rec = (Record) obj;
                     addToPanel(rec);
                 }
                 break;
@@ -332,6 +275,7 @@ public class MainFrame extends JFrame implements EventController {
             StringSelection strSel =
                     new StringSelection(text);
 
+            statusLab.setText("Buffer has: "+text);
             clpbrd.setContents(strSel, null);
         }
     }

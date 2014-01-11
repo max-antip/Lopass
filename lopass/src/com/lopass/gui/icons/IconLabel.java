@@ -85,17 +85,17 @@ public class IconLabel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 setBackground(PRESSED_BG_COLOR);
 
-                if (e.getClickCount() == 2) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            remove(textLbl);
-                            add(editTextField, 1);
-                            repaint();
-                            revalidate();
-                        }
-                    });
-                }
+//                if (e.getClickCount() == 2) {
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            remove(textLbl);
+//                            add(editTextField, 1);
+//                            repaint();
+//                            revalidate();
+//                        }
+//                    });
+//                }
             }
 
             @Override

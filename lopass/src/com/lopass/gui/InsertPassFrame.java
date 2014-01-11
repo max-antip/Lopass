@@ -16,8 +16,7 @@ public class InsertPassFrame extends JFrame implements EventController {
     public static final Font FONT = new Font("Arial", Font.PLAIN, 16);
     public static final Font LABEL_FONT = new Font("Arial", Font.PLAIN, 12);
     public static final Color COLOR_BACKGROUND = new Color(255, 198, 169);
-    private JTextField titleField, passField, loginField, subTitleField;
-
+    private JTextField titleField, passField, loginField;
     private JButton addBut;
 
     InsertFrameController controller;
@@ -29,9 +28,6 @@ public class InsertPassFrame extends JFrame implements EventController {
 
         titleField = new JTextField();
         titleField.setFont(FONT);
-
-        subTitleField = new JTextField();
-        subTitleField.setFont(FONT);
 
         loginField = new JTextField();
         loginField.setFont(FONT);
@@ -45,7 +41,7 @@ public class InsertPassFrame extends JFrame implements EventController {
         addBut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.addRecord(titleField.getText(), subTitleField.getText(), loginField.getText(), passField.getText());
+                controller.addRecord(titleField.getText(), loginField.getText(), passField.getText());
                 dispose();
             }
         });
@@ -54,11 +50,6 @@ public class InsertPassFrame extends JFrame implements EventController {
         titleLbl.setFont(LABEL_FONT);
         add(titleLbl);
         add(titleField, "w 140!,wrap");
-
-        JLabel subTitleLbl = new JLabel("Sub title");
-        subTitleLbl.setFont(LABEL_FONT);
-        add(subTitleLbl);
-        add(subTitleField, "w 140!,wrap");
 
         JLabel loginLbl = new JLabel("Login");
         loginLbl.setFont(LABEL_FONT);

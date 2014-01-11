@@ -5,10 +5,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 public class Icons {
 
@@ -37,8 +36,7 @@ public class Icons {
     public static ImageIcon getIcon(String iconName, int size) {
         Image smallImg = null;
         try {
-            URL url = Icons.class.getResource(iconName);
-            BufferedImage image = ImageIO.read(new File(url.toURI()));
+            BufferedImage image = getImage(iconName);
 
             smallImg = image.getScaledInstance(size, size, Image.SCALE_SMOOTH);
 
@@ -50,11 +48,15 @@ public class Icons {
         return new ImageIcon(smallImg);
     }
 
+    private static BufferedImage getImage(String iconName) throws IOException, URISyntaxException {
+            InputStream is =Icons.class.getResourceAsStream(iconName);
+            return ImageIO.read(is);
+    }
+
     public static ImageIcon getIcon(String iconName) {
         Image smallImg = null;
         try {
-            URL url = Icons.class.getResource(iconName);
-            BufferedImage image = ImageIO.read(new File(url.toURI()));
+            BufferedImage image = getImage(iconName);
             return new ImageIcon(image);
         } catch (IOException e) {
             e.printStackTrace();

@@ -23,9 +23,9 @@ public class MainFrameController {
     }
 
     public void addLoginPass(String title, String subTitle, String login, String pass) {
-        Record.LoginPass lp = new Record.LoginPass(subTitle, login, pass);
-        lp.setParentTitle(title);
-        if (service.addSubRecord(title, lp)) {
+        Record lp = new Record(subTitle, login, pass);
+        lp.setTitle(title);
+        if (service.addRecord(lp)) {
             eventBus.fireEvent(EventMessage.ADD_PASS_LOGIN, lp);
         }
     }

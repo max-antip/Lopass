@@ -45,18 +45,6 @@ public class StorageService {
         return recordList.add(item);
     }
 
-    public boolean addSubRecord(String passItemTitle, Record.LoginPass lp) {
-        if (lp == null) throw new NullPointerException("LoginPass must be not null");
-        for (Record ps : recordList) {
-            if (ps.getTitle().equals(passItemTitle)) {
-                return ps.addLoginPass(lp);
-            }
-        }
-        System.out.println("Item with title " +
-                passItemTitle + " was not found");
-        return true;
-    }
-
     private StorageService(String dbName, char[] pass) {
         String passStr = String.valueOf(pass);
         coder = new Coder(passStr);
