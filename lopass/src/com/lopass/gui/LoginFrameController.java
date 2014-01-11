@@ -11,7 +11,7 @@ public class LoginFrameController {
     private StorageService service;
 
     public void submit(String login, char[] pass) {
-        StorageService.init(login, pass);
+        StorageService.init(login.trim(), pass);
         StorageService storageService = StorageService.getInstance();
 
         boolean loaded = storageService.loadDB();
