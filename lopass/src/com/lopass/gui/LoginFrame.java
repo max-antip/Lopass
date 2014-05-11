@@ -5,6 +5,7 @@ import com.lopass.event.EventBus;
 import com.lopass.event.EventController;
 import com.lopass.event.EventMessage;
 import com.lopass.gui.custom.FrameLP;
+import com.lopass.gui.helpers.FrameHelper;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -34,7 +35,7 @@ public class LoginFrame extends FrameLP implements EventController {
         eventBus.addListener(this);
 
         setLayout(new BorderLayout());
-        setLocationRelativeTo(null);
+
         setPreferredSize(new Dimension(210, 160));
         setResizable(false);
 
@@ -80,6 +81,10 @@ public class LoginFrame extends FrameLP implements EventController {
 
         add(mainPanel, BorderLayout.CENTER);
 
+        setVisible(true);
+        pack();
+
+        FrameHelper.setToCenterScreen(this);
     }
 
     @Override

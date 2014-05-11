@@ -22,11 +22,17 @@ public class MainFrameController {
         System.exit(0);
     }
 
-    public void addLoginPass(String title, String subTitle, String login, String pass) {
+    public void addRecord(String title, String subTitle, String login, String pass) {
         Record lp = new Record(subTitle, login, pass);
         lp.setTitle(title);
         if (service.addRecord(lp)) {
             eventBus.fireEvent(EventMessage.ADD_PASS_LOGIN, lp);
+        }
+    }
+
+    public void removeRecord(String title) {
+        if (service.removeRecord(title)) {
+            eventBus.fireEvent(EventMessage.REMOVE_PASS_LOGIN, title);
         }
     }
 

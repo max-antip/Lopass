@@ -18,9 +18,8 @@ public class Lopass {
             }
         });
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        LoginFrame lf = new LoginFrame();
-        lf.setVisible(true);
-        lf.pack();
+
+        new LoginFrame();
     }
 
 }

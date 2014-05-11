@@ -22,6 +22,20 @@ public class StorageService {
         return recordList;
     }
 
+    public boolean removeRecord(String recordTitle) {
+        Record found = null;
+        for (Record r : recordList) {
+            if (r.getTitle().equals(recordTitle)) {
+                found = r;
+                break;
+            }
+        }
+        if (found != null) {
+            return recordList.remove(found);
+        }
+        return false;
+    }
+
     public static StorageService getInstance() {
         if (instance == null) {
             throw new IllegalStateException

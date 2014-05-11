@@ -44,7 +44,7 @@ public class MainFrame extends JFrame implements EventController {
     private Map<String, JPanel> recordMap;
 
 
-    MainFrameController controller;
+    static MainFrameController controller;
 
     public MainFrame() {
         super(LOPASS_TITLE);
@@ -114,7 +114,7 @@ public class MainFrame extends JFrame implements EventController {
 
         if (!hasRecord(record)) {
             subContentPanel = new JPanel(
-                    new MigLayout("", "[]5[]1[]20[]1[]", "5[]5"));
+                    new MigLayout("", "[]5[110,right]1[]20[]1[]", "5[]5"));
 
             subContentPanel.setBackground(CONTENT_PANEL_BG);
 
@@ -130,20 +130,19 @@ public class MainFrame extends JFrame implements EventController {
         revalidate();
     }
 
-    private void addToPanel(JPanel subContentPanel, Record lp) {
-        JLabel subTitleLbl = new JLabel(lp.getTitle());
+    private void addToPanel(JPanel subContentPanel, Record record) {
+        JLabel subTitleLbl = new JLabel(record.getTitle());
         subTitleLbl.setFont(FONT_SUB_TITLE);
 
-        final IconLabel loginLbl = new IconLabel(lp.getLogin(),
+        final IconLabel loginLbl = new IconLabel(record.getLogin(),
                 Icons.getVerySmallIcon(Icons.LOGIN));
-        loginLbl.addMouseListener(new CopyToBufferAdapter(loginLbl.getText()));
+        loginLbl.addMouseListener(new CopyToBufferAdapter(loginLbl.getText(), false));
 
-        IconLabel passLbl = new IconLabel(lp.getPass(),
-                Icons.getVerySmallIcon(Icons.PASS));
-        passLbl.addMouseListener(new CopyToBufferAdapter(passLbl.getText()));
+        IconLabel passLbl = new IconLabel(Icons.getMiddleIcon(Icons.PASS));
+        passLbl.addMouseListener(new CopyToBufferAdapter(record.getPass(), true));
 
         subContentPanel.add(subTitleLbl, "w 97!,gapleft 10");
-
+        subContentPanel.setComponentPopupMenu(new Menu(record.getTitle()));
         subContentPanel.add(loginLbl);
         subContentPanel.add(passLbl, "wrap");
 
@@ -151,6 +150,24 @@ public class MainFrame extends JFrame implements EventController {
 //        subContentPanel.add(loginLbl, "gapleft 4");
 //        subContentPanel.add(passIcon);
 //        subContentPanel.add(passLbl, "gapleft 4,wrap");
+    }
+
+    private static class Menu extends JPopupMenu {
+        String title;
+
+        Menu(final String title) {
+            this.title = title;
+            JMenuItem delete = new JMenuItem();
+            delete.setText("Remove");
+            delete.setAction(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    controller.removeRecord(title);
+                }
+            });
+            add(delete);
+
+        }
     }
 
     private JPanel getRecordPanel(String key) {
@@ -183,7 +200,7 @@ public class MainFrame extends JFrame implements EventController {
         submitBut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.addLoginPass(parentTitle,
+                controller.addRecord(parentTitle,
                         subtitleFld.getText(),
                         loginFld.getText(),
                         passFld.getText());
@@ -247,6 +264,15 @@ public class MainFrame extends JFrame implements EventController {
                     addToPanel(rec);
                 }
                 break;
+            case EventMessage.REMOVE_PASS_LOGIN:
+                if (obj instanceof String) {
+                    String recTitle = (String) obj;
+                    JPanel rec = recordMap.get(recTitle);
+                    contentPanel.remove(rec);
+                    repaint();
+                    revalidate();
+                }
+                break;
 
             case EventMessage.FIRST_LOAD:
                 List<Record> passList = StorageService.
@@ -261,22 +287,33 @@ public class MainFrame extends JFrame implements EventController {
 
     private class CopyToBufferAdapter extends MouseAdapter {
 
-        String text;
+        private String text;
+        private String hiddenText;
+        private Clipboard clipboard;
 
-        public CopyToBufferAdapter(String text) {
+        public CopyToBufferAdapter(String text, boolean passStyle) {
             this.text = text;
+            clipboard = Toolkit.getDefaultToolkit().
+                    getSystemClipboard();
+            if (passStyle) {
+                StringBuilder stb = new StringBuilder();
+                int passSize = text.length();
+                int k = 1;
+                while (passSize - k > -1) {
+                    stb.append("*");
+                    k++;
+                }
+                hiddenText = stb.toString();
+            }
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            Clipboard clpbrd = Toolkit.getDefaultToolkit().
-                    getSystemClipboard();
-
             StringSelection strSel =
                     new StringSelection(text);
-
-            statusLab.setText("Buffer has: "+text);
-            clpbrd.setContents(strSel, null);
+            String str = hiddenText == null ? text : hiddenText;
+            statusLab.setText("Buffer has: " + str);
+            clipboard.setContents(strSel, null);
         }
     }
 

@@ -31,11 +31,24 @@ public class IconLabel extends JPanel {
         setBorder(EMPTY_BORDER);
         setOpaque(false);
         initMouseListeners();
-        if (text == null || icon == null) throw new NullPointerException("Icon or text is null");
+        initText(text);
+        initIcon(icon);
+    }
 
-        textLbl = new JLabel(text);
+    public IconLabel(Icon icon) {
+        this("", icon);
+    }
+
+    private void initIcon(Icon icon) {
+        if (icon == null) throw new NullPointerException("Text is null");
         iconLbl = new JLabel(icon);
+        add(iconLbl);
 
+    }
+
+    private void initText(String text) {
+        if (text == null) throw new NullPointerException("Text is null");
+        textLbl = new JLabel(text);
         editTextField = new JTextField(TEXT_FlD_SIZE);
         editTextField.addKeyListener(new KeyAdapter() {
             @Override
@@ -59,10 +72,7 @@ public class IconLabel extends JPanel {
                 }
             }
         });
-
-        add(iconLbl);
         add(textLbl);
-
     }
 
     public String getText() {
