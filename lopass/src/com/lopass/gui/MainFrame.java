@@ -156,9 +156,9 @@ public class MainFrame extends JFrame implements EventController {
         String title;
 
         Menu(final String title) {
+            super();
             this.title = title;
-            JMenuItem delete = new JMenuItem();
-            delete.setText("Remove");
+            JMenuItem delete = new JMenuItem("Remove");
             delete.setAction(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,6 @@ public class MainFrame extends JFrame implements EventController {
                 }
             });
             add(delete);
-
         }
     }
 
