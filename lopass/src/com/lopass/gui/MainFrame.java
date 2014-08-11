@@ -11,6 +11,7 @@ import com.lopass.main.Record;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.ActionMapUIResource;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -25,8 +26,8 @@ public class MainFrame extends JFrame implements EventController {
 
     private static final String LOPASS_TITLE = "LoPass";
 
-    private static final Color MAIN_BG = new Color(201, 240, 184);
-    private static final Color CONTENT_PANEL_BG = new Color(177, 240, 161);
+    private static final Color MAIN_BG = Color.WHITE;
+    private static final Color CONTENT_PANEL_BG = Color.WHITE;
     private static final Color LIGHT_BG = new Color(223, 254, 209);
     private static final int MAIN_WIDTH = 420;
     private static final int MAIN_HEIGHT = 480;
@@ -35,6 +36,7 @@ public class MainFrame extends JFrame implements EventController {
     private static final Font FONT_SUB_TITLE = new Font("Arial", Font.BOLD, 11);
     private static final Color INSERT_PANEL_COlOR = new Color(237, 151, 126);
     public static final boolean RESIZABLE = true;
+    public static final String REMOVE = "Remove";
 
     JScrollPane scrollPane;
     JPanel contentPanel;
@@ -114,10 +116,10 @@ public class MainFrame extends JFrame implements EventController {
 
         if (!hasRecord(record)) {
             subContentPanel = new JPanel(
-                    new MigLayout("", "[]5[110,right]1[]20[]1[]", "5[]5"));
+                    new MigLayout("", "[]5[grow,right]1[]2[]1[]", "5[]5"));
 
             subContentPanel.setBackground(CONTENT_PANEL_BG);
-
+            subContentPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2));
             recordMap.put(record.getTitle(), subContentPanel);
             contentPanel.add(subContentPanel, "wrap");
 
@@ -138,14 +140,13 @@ public class MainFrame extends JFrame implements EventController {
                 Icons.getVerySmallIcon(Icons.LOGIN));
         loginLbl.addMouseListener(new CopyToBufferAdapter(loginLbl.getText(), false));
 
-        IconLabel passLbl = new IconLabel(Icons.getMiddleIcon(Icons.PASS));
+        IconLabel passLbl = new IconLabel(Icons.getSMiddleIcon(Icons.PASS));
         passLbl.addMouseListener(new CopyToBufferAdapter(record.getPass(), true));
 
         subContentPanel.add(subTitleLbl, "w 97!,gapleft 10");
         subContentPanel.setComponentPopupMenu(new Menu(record.getTitle()));
         subContentPanel.add(loginLbl);
         subContentPanel.add(passLbl, "wrap");
-
 //        subContentPanel.add(loginIcon);
 //        subContentPanel.add(loginLbl, "gapleft 4");
 //        subContentPanel.add(passIcon);
@@ -158,8 +159,8 @@ public class MainFrame extends JFrame implements EventController {
         Menu(final String title) {
             super();
             this.title = title;
-            JMenuItem delete = new JMenuItem("Remove");
-            delete.setAction(new AbstractAction() {
+            JMenuItem delete = new JMenuItem(REMOVE);
+            delete.addActionListener(new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     controller.removeRecord(title);
