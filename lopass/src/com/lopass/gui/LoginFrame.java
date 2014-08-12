@@ -11,18 +11,17 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 public class LoginFrame extends FrameLP implements EventController {
 
     public static final String WELCOME_TITLE = "Welcome";
     public static final String BUTTON_LOGIN = "Login";
     public static final Color MAIN_PANEL_BG = new Color(201, 240, 184);
-
-    JTextField loginField;
+    public static final String DATA_PATH = System.getProperty("user.dir") + "/data";
+    JComboBox<String> loginField;
     JPasswordField passField;
-
     JButton submitBtn;
-
     JLabel statusLab;
 
     LoginFrameController controller;
@@ -30,10 +29,10 @@ public class LoginFrame extends FrameLP implements EventController {
 
     public LoginFrame() {
         super(WELCOME_TITLE);
+
         controller = new LoginFrameController();
         eventBus = EventBus.getInstance();
         eventBus.addListener(this);
-
         setLayout(new BorderLayout());
 
         setPreferredSize(new Dimension(210, 160));
@@ -50,14 +49,18 @@ public class LoginFrame extends FrameLP implements EventController {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new MigLayout("", "20[grow,fill]20", "20[][][]20"));
 
-        loginField = new JTextField();
+
+        loginField = new JComboBox<>();
+        loginField.setEditable(true);
+        initLoginBox();
+
         passField = new JPasswordField();
 
         passField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    controller.submit(loginField.getText(), passField.getPassword());
+                    classicLogin();
                 }
             }
         });
@@ -68,9 +71,10 @@ public class LoginFrame extends FrameLP implements EventController {
         submitBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.submit(loginField.getText(), passField.getPassword());
+                classicLogin();
             }
         });
+
 
         mainPanel.setPreferredSize(new Dimension());
         mainPanel.add(loginField, "wrap");
@@ -85,6 +89,28 @@ public class LoginFrame extends FrameLP implements EventController {
         pack();
 
         FrameHelper.setToCenterScreen(this);
+    }
+
+    private void classicLogin() {
+        if (loginField.getSelectedItem() != null && !loginField.getSelectedItem().equals("")) {
+            controller.submit((String) loginField.getSelectedItem(), passField.getPassword());
+        }
+    }
+
+    private void initLoginBox() {
+        File dataDir = new File(DATA_PATH);
+        File[] files = dataDir.listFiles();
+
+        if (files != null) {
+            for (File f : files) {
+                String fileName = f.getName();
+                if (fileName.contains(".")) {
+                    int stopIdx = fileName.indexOf(".");
+                    fileName = fileName.substring(0, stopIdx);
+                }
+                loginField.addItem(fileName);
+            }
+        }
     }
 
     @Override

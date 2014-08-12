@@ -37,6 +37,7 @@ public class MainFrame extends JFrame implements EventController {
     private static final Color INSERT_PANEL_COlOR = new Color(237, 151, 126);
     public static final boolean RESIZABLE = true;
     public static final String REMOVE = "Remove";
+    public static final Color BORDER_COLOR = new Color(237, 237, 237);
 
     JScrollPane scrollPane;
     JPanel contentPanel;
@@ -119,7 +120,7 @@ public class MainFrame extends JFrame implements EventController {
                     new MigLayout("", "[]5[grow,right]1[]2[]1[]", "5[]5"));
 
             subContentPanel.setBackground(CONTENT_PANEL_BG);
-            subContentPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2));
+            subContentPanel.setBorder(new LineBorder(BORDER_COLOR, 2));
             recordMap.put(record.getTitle(), subContentPanel);
             contentPanel.add(subContentPanel, "wrap");
 
