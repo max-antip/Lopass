@@ -309,7 +309,7 @@ public class MainFrame extends JFrame implements EventController {
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mousePressed(MouseEvent e) {
             StringSelection strSel =
                     new StringSelection(text);
             String str = hiddenText == null ? text : hiddenText;
